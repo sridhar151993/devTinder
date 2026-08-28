@@ -21,16 +21,9 @@ const checkUser = (req,res,next)=>{
     }
 }
 
-const checkRole = (req,res,next)=>{
-    const role = req.headers.role;
-    if(role === "admin"){
-        next();
-    }else{
-        res.send("invalid role");
-    }
-}
 
-app.get("/platform",checkTicket,checkUser,checkRole,(req,res)=>{
+
+app.get("/platform",checkTicket,checkUser,(req,res)=>{
     console.log("all checks passed");
     res.send("allow access to platform");
 });
