@@ -1,36 +1,37 @@
 const express = require('express');
-
+const connectDB = require("./config/database");
+require("dotenv").config();
 const app = express();
+const User = require("./models/user");
 
-const checkTicket = (req,res,next)=>{
+app.use(express.json());
 
-    const ticket = req.headers.ticket;
-    if(ticket === "1234"){
-        next();
-    }else{
-        res.send("invalid ticket");
+app.post("/signup", async (req, res) => {
+    // const { firstName, lastName, emailId, age, gender } = req.body
+
+    const user = new User(req.body);
+
+    try{
+        await user.save();
+        res.status(201).json("user saved successfully");
+    } catch (error) {
+        res.status(500).json({ error: "Failed to save user" }); 
     }
-}
 
-const checkUser = (req,res,next)=>{
-    const user = req.headers.user;  
-    if(user === "admin"){
-        next();
-    }else{
-        res.send("invalid user");
-    }
-}
-
-
-
-app.get("/platform",checkTicket,checkUser,(req,res)=>{
-    console.log("all checks passed");
-    res.send("allow access to platform");
 });
 
-
-
-app.listen(7777,()=>{
+connectDB().then(() => {
+    console.log("Database connected successfully");
+    app.listen(7777,()=>{
     console.log("server is running on port 7777")
 })
+}).catch((error) => {
+    console.error("Error connecting to the database:", error);
+})
+
+
+
+
+
+
 
